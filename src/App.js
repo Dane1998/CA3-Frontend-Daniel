@@ -12,7 +12,7 @@ import Scrape from "./joke/Scrape"
 function App() {
   return (
     <div className="App">
-      <h2>Suh dude</h2>
+      <h2>Daniel</h2>
       <Router>
         <Header />
         <Switch>
@@ -40,7 +40,7 @@ const Header = () => {
 function Welcome() {
   return (
     <div className="d-flex justify-content-center align-items-center link">
-      <a href="google.com">TODO: setup link for github</a>
+      <a href="google.com"></a>
     </div>
   )
 }

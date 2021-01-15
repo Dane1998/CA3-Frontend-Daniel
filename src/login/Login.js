@@ -1,22 +1,38 @@
-import React, { useState} from 'react';
+import { useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 
-export default function Login(props) {
-    const [state, setState] = useState();
 
-    const onSubmit = (evt) => {
-        evt.preventDefault();
-        props.login(state.username, state.password);
-    }
+export default function LogIn({ login, init, errorMsg }) {
+  const [loginCredentials, setLoginCredentials] = useState(init);
 
-    const onChange = (evt) => {
-        setState({ ...state, [evt.target.id]: evt.target.value });
-    }
+  const history = useHistory();
 
+  const performLogin = (evt) => {
+    evt.preventDefault();
+    login(loginCredentials.username, loginCredentials.password);
+  };
+  const onChange = (evt) => {
+    setLoginCredentials({
+      ...loginCredentials,
+      [evt.target.id]: evt.target.value,
+    });
+  };
+ 
     return (
-        <form onSubmit={onSubmit} onChange={onChange}>
-            <input type="text" placeholder="username" id="username" />
-            <input type="text" placeholder="password" id="password" />
-            <input type="submit" value="Login" className="btn btn-primary"/>
-        </form>
-    )
-}
+        <div> 
+        <h1> Log in </h1>
+              <form onChange={onChange}>
+                
+                    Username:
+                    <input type="text" id="username" onChange={onChange} />
+              
+               
+                    Password:
+                    <input type="password" id="password" onChange={onChange} />
+                
+                  <button onClick={performLogin}>Login</button>
+             
+              </form>
+              </div>
+      );
+    }

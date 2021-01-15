@@ -1,18 +1,9 @@
-const URLs = {
-    "Home": "/",
-    "Login": "/login",
-    "Joke": "/joke",
-    "Scrape": "/scrape",
-    
-}
-
-function URLSettings() {
-    const getURL = (key) => { return URLs[key] }
-
+function URL() {
     return {
-        getURL
-    }
-}
-export default URLSettings();
-
+      server: "https://dgpcoding.com/startcode",
+    };
+  }
+  const url = URL();
+  export default url;
+  
 

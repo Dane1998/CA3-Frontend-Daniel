@@ -1,49 +1,103 @@
 
-import React from 'react';
-import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-dom";
+import React, {useState} from 'react';
 import './App.css';
-import LoginForm from './login/LoginForm';
-import URLSettings from './settings'
-import Joke from "./joke/Joke"
-import Scrape from "./joke/Scrape"
+import { BrowserRouter as Router, 
+  Switch, 
+  Route, 
+  NavLink, 
+  useLocation,
+  useHistory
+ } from "react-router-dom";
 
+import Login from "./login/Login";
+import LoggedIn from "./login/LoggedIn";
+import LoginForm from "./login/LoginForm";
+import facade from "./login/ApiFacade";
+import Admin from "./components/Admin"
+import Fetch from "./components/Fetch"
+import User from "./components/User"
+import Home from "./components/Home"
+import Header from "./components/Header"
 
 
 function App() {
+ const [errorMsg, setErrorMsg] = useState("");
+ const [loggedIn, setLoggedIn] = useState(false);
+ let history = useHistory();
+
+ const logout = () => {
+   facade.logout();
+   setLoggedIn(false);
+ };
+ 
+ const login = (user, pass) => {
+   facade
+   .login(user, pass)
+   .then((res) => setLoggedIn(true))
+   .catch((err) => {
+     err.fullError.then((err) => {
+       setErrorMsg(err.message);
+     })
+   })
+ }
+
+ const setLoginStatus = (status) => {
+   setLoggedIn(status)
+   history.push("/Home");
+ };
+
+ return (
+   <Router>
+  <div>
+  <Header loginMsg={loggedIn ? "Logout" : "Login"} loggedIn={loggedIn} />
+  <Switch>
+    <Route exact path="/">
+      <Home />
+    </Route>
+    <Route path="/page1">
+      <Fetch />
+    </Route>
+    <Route path="/page2">
+      <User />
+    </Route>
+    <Route path="/page3">
+      <Admin />
+    </Route>
+    <Route path="/login">
+      {!loggedIn ? (
+        <LoginForm
+          errorMsg={errorMsg}
+          setErrorMsg={setErrorMsg}
+          login={login}
+        />
+      ) : (
+        <div>
+          <LoggedIn />
+          <button onClick={logout}>Logout</button>
+        </div>
+      )}
+    </Route>
+    <Route path="*">
+      <NoMatch />
+    </Route>
+  </Switch>
+</div>
+</Router>
+);
+}
+ 
+   
+
+function NoMatch() {
+  let location = useLocation();
+
   return (
-    <div className="App">
-      <h2>Daniel</h2>
-      <Router>
-        <Header />
-        <Switch>
-          <Route exact path={URLSettings.getURL("Home")}> <Welcome /> </Route>
-          <Route path={URLSettings.getURL("Login")}> <LoginForm /> </Route>
-          <Route path={URLSettings.getURL("Joke")}> <Joke /> </Route>
-          <Route path={URLSettings.getURL("Scrape")}> <Scrape /> </Route>
-        
-        </Switch>
-        
-      </Router>
+    <div>
+      <h3>
+        No match for <code>{location.pathname}</code>
+      </h3>
     </div>
   );
 }
-const Header = () => {
-  return (
-    <ul className="header">
-      <li><NavLink activeClassName="active" exact to={URLSettings.getURL("Home")}>Home</NavLink></li>
-      <li><NavLink activeClassName="active" to={URLSettings.getURL("Login")}>Login</NavLink></li>
-      <li><NavLink activeClassName="active" to={URLSettings.getURL("Joke")}>Jokes</NavLink></li>     
-      <li><NavLink activeClassName="active" to={URLSettings.getURL("Scrape")}>Scrape</NavLink></li>     
-    </ul>
-  )
-}
-function Welcome() {
-  return (
-    <div className="d-flex justify-content-center align-items-center link">
-      <a href="google.com"></a>
-    </div>
-  )
-}
-
 
 export default App;
